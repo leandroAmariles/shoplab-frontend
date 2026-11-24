@@ -1,0 +1,25 @@
+﻿name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+concurrency:
+  group: ci-frontend-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  ci:
+    uses: leandroAmariles/shoplab-ci/.github/workflows/angular-app.yml@v1
+    with:
+      node-version: '22'
+      image-name: 'ghcr.io/leandroamariles/frontend'
+      publish-image: ${{ github.ref == 'refs/heads/main' }}
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
